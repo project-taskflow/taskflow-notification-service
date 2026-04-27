@@ -1,0 +1,48 @@
+{{- if .Values.notificationService.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ .Values.notificationService.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.notificationService.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.notificationService.name }}
+  strategy:
+    blueGreen:
+      activeService: {{ .Values.notificationService.name }}
+      previewService: {{ printf "%s-preview" .Values.notificationService.name }}
+      autoPromotionEnabled: true
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.notificationService.name }}
+    spec:
+{{- with .Values.notificationService.podSecurityContext }}
+      securityContext:
+{{ toYaml . | nindent 8 }}
+{{- end }}
+      containers:
+        - name: {{ .Values.notificationService.name }}
+          image: {{ .Values.notificationService.image }}
+          imagePullPolicy: {{ .Values.notificationService.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.notificationService.containerPort }}
+{{- with .Values.notificationService.env }}
+          env:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+{{- with .Values.notificationService.resources }}
+          resources:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+{{- with .Values.notificationService.livenessProbe }}
+          livenessProbe:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+{{- with .Values.notificationService.readinessProbe }}
+          readinessProbe:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+
