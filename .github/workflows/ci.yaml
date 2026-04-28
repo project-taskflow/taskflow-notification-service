@@ -21,9 +21,9 @@ jobs:
     with:
       trigger_event: ${{ github.event_name }}
       source_sha: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
-      service_name: auth-service
-      image_name: auth-service
-      helm_values_key: authService
+      service_name: notification-service
+      image_name: notification-service
+      helm_values_key: notificationService
       dev_manifest_path: argocd-test/dev/notification-service-application.yaml
       sonar_key: project-taskflow_taskflow-notification-service_047ca157-50ee-4e79-8556-baf64b0597c2
       docker_context: .
@@ -44,9 +44,9 @@ jobs:
     uses: project-taskflow/taskflow/.github/workflows/reusable-release.yaml@main
     with:
       release_tag: ${{ inputs.release_tag }}
-      service_name: notification-service
-      image_name: notification-service
-      helm_values_key: notificationService
+      service_name: auth-service
+      image_name: auth-service
+      helm_values_key: authService
       dev_manifest_path: argocd-test/dev/notification-service-application.yaml
       prod_manifest_path: argocd-test/prod/notification-service-application.yaml
       infra_repository: project-taskflow/taskflow
